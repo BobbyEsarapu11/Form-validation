@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form validation</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="/jquery/js.js"></script>
+</head>
+<body>
+    <div id="errors"></div>
+    <div id="success"></div>
+    <div class="container">
+        <div class="sub-containers">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+        <div class="sub-containers">
+            <label for="phoneno">phone-no:</label>
+            <input type="tel" id="phoneno" name="phoneno" required>
+        </div>
+        <div class="sub-containers password">
+            <label for="password">Password:</label>
+            <input type="password" id="password" placeholder="Enter password" name="password" required>
+            <span class="eye" onclick="getpassword()">👁️</span>
+        </div>
+        <div class="sub-containers password">
+            <label for="confirmpassword">Confirm Password:</label>
+            <input type="password" id="confirmpassword" placeholder="Enter confirm password" name="confirmpassword"  required >
+            <span class="eye" onclick="getpassword()">👁️</span>
+        </div>
+        <input type="submit" value="Submit" id="submit">
+    </div>
+    <script>
+        var errormesage = "";
+        var missingFields = "";
+        function getpassword(){
+            var passwordField = document.getElementById("password");
+            var confirmPasswordField = document.getElementById("confirmpassword");
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                confirmPasswordField.type = "text";
+                $(".eye").text("🙈"); // Change icon to indicate visibility
+            } else {
+                passwordField.type = "password";
+                confirmPasswordField.type = "password";
+                $(".eye").text("👁️"); // Change icon to indicate hidden
+            }
+        }
+        function validatepassword(){
+            var password = document.getElementById("password").value;
+            var confirmPassword = document.getElementById("confirmpassword").value;
+            
+            return { password: password, confirmPassword: confirmPassword };
+        }
+        function validateEmail(email) {
+            var regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            return regex.test(email);
+        }
+        $("#submit").click(function(){
+            if ($("#email").val() == ""){
+                missingFields += "<p> Email is required.</P>";
+            }
+            if ($("#phoneno").val() == ""){
+                missingFields += "<p> Phone number is required.</P>";
+            }
+            if ($("#password").val() == ""){
+                missingFields += "<p> Password is required.</P>";
+            }
+            if(validateEmail($("#email").val())== false){
+                errormesage += "<p> Please enter a valid email address.</P>";
+            }
+            if($("#phoneno").val().length < 10 && $.isNumeric($("#phoneno").val())){
+                errormesage += "<p> Please enter a valid phone number.</P>";
+            }
+            if($("#password").val()!= $("#confirmpassword").val()){
+                errormesage += "<p> Passwords do not match.</P>";
+            }
+            if(validatepassword().password.length < 8 && validatepassword().confirmPassword.length < 8){
+                errormesage += "<p> Password must be at least 8 characters long.</P>";
+            }
+            var passwordObj = validatepassword(); //password object
+            if (!/[0-9]/.test(passwordObj.password) || !/[0-9]/.test(passwordObj.confirmPassword)) {
+                errormesage += "<p> Password must contain at least one number.</P>";
+            }
+            if (!/[!@#$%^&*(),.?":{}|<>]/.test(passwordObj.password) || !/[!@#$%^&*(),.?":{}|<>]/.test(passwordObj.confirmPassword)) {
+                errormesage += "<p> Password must contain at least one special character.</P>";
+            }
+            if (!/[a-z]/.test(passwordObj.password) || !/[a-z]/.test(passwordObj.confirmPassword)) {
+                errormesage += "<p> Password must contain at least one lowercase letter.</P>";
+            }
+            if (!/[A-Z]/.test(passwordObj.password) || !/[A-Z]/.test(passwordObj.confirmPassword)) {
+                errormesage += "<p> Password must contain at least one uppercase letter.</P>";
+            }
+            
+            
+            
+
+            if (errormesage == "" && missingFields == "") {
+                $("#success").html("<P>Form submitted successfully!</P>");
+            } else {
+                $("#errors").html(errormesage + missingFields);
+                errormesage = "";
+                missingFields = "";
+            }
+            
+
+
+        });
+    </script>
+</body>
+</html>
